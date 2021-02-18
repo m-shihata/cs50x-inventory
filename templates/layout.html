@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html lang="en" class="h-100">
+
+    <head>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+        
+        <!-- https://favicon.io/emoji-favicons/card-file-box/ -->
+        <link href="/static/favicon.ico" rel="icon">
+        <link href="/static/styles.css" rel="stylesheet">
+                
+        <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+        <!-- font awesome for icons -->
+        <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" data-auto-a11y="true"></script>
+        <title>{% block title %}{% endblock %}</title>
+
+        <script src="/static/table_download.js"></script>
+        <script src="/static/table_filter.js"></script>
+
+    </head>
+
+    <body class="d-flex flex-column h-100 p-0">
+
+        <nav class="navbar navbar-expand-md navbar-light bg-light border shadow-sm py-0">
+            <a class="navbar-brand h1 pt-0 px-1 mr-4" style="font-size: xx-large; font-family: 'Pacifico', cursive;" href="/">
+                <!--<img src="/static/inventory.png" width="30" height="30" class="d-inline-block align-center mb-2" alt="logo">-->
+                <span>Inventory</span>
+            </a>    
+
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                {% if session.user_id %}
+                    <ul class="navbar-nav mr-auto mt-1 text-center">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/add-item">
+                                <i class="fas fa-project-diagram h4 mb-0 mx-2"></i><br>
+                                <span class="small">Manage</span>
+                            </a>
+                        </li>
+                        <!--                        
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="/add-transaction">
+                                <i class="fas fa-wave-square h4 mb-0 mx-2"></i><br>
+                                <span class="small">IN/OUT</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="/history">
+                                <i class="fas fa-history h4 mb-0 mx-auto"></i><br>
+                                <span class="small">History</span>
+                            </a>
+                        </li>
+                    -->
+
+                    </ul>
+                    <ul class="navbar-nav ml-auto mt-1 text-center">
+                        <li class="nav-item dropdown">
+                            <a class="text-center nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-versions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-hashtag h4 mr-2 mb-0"></i><br>
+                                <span class="small">{{ p_inv[0]['name'] }}</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bd-versions">
+                            {% for i in range(invs | length) %}
+                                <a class="dropdown-item {{ invs[i]['active']}}" href="/inventory/{{ invs[i]['id'] }}">{{ invs[i]['name'] }}</a>
+                            {% endfor %}
+                            </div>
+                          </li>
+                      
+                        <li class="nav-item">
+                            <a class="nav-link" href="/sign-out">
+                                <i class="fas fa-sign-out-alt h4 mb-0"></i><br>
+                                <span class="small">Sign out</span>
+                            </a>
+                        </li>
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav ml-auto mt-1 text-center">
+                        <li class="nav-item"><a class="nav-link" href="/sign-up"><i class="fas fa-user-plus h4 mb-0"></i><br><span class="small">Sign up</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="/sign-in"><i class="fas fa-sign-in-alt h4 mb-0"></i><br><span class="small">Sign in</span></a></li>
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flashes">
+                    {% for category, message in messages %}
+                        <div class="flash alert {{ category }} text-center py-2">{{ message | safe }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <main class="p-4 h-100" style="overflow-x: auto; overflow-y: auto; text-align: center;">
+            {% block main %}{% endblock %}
+        </main>
+        
+        <footer class="d-flex justify-content-center mt-auto">
+            <div class="small text-center text-muted mb-2">
+                Inventory made by <a href="https://github.com/MuhammadShihata">Muhammad Shihata</a>. Thanks to <a href="https://cs50.harvard.edu/x/2020/">CS50x</a>.
+            </div>
+        </footer>
+    </body>
+
+</html>

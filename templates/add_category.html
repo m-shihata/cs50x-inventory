@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add category
+{% endblock %}
+
+{% block main %}
+<div class="d-flex justify-content-center">
+    <div class="d-flex flex-column align-items-center" style="width: 420px;">
+        <ul class="p-0 m-0 d-flex flex-row text-center shadow-sm mb-2" style="list-style-type: none; min-width: 100%;">
+            <li style="width: 100%">
+                <a class="nav-link bg-white border" href="/add-category">
+                    <i class="fas fa-plus mr-2"></i><span class="small">Add</span>
+                </a>
+            </li>
+            <li style="width: 100%">
+                <a class="nav-link bg-light border" href="/edit-category">
+                    <i class="fas fa-edit mr-2"></i><span class="small">Edit</span>
+                </a>
+            </li>
+            <li style="width: 100%">
+                <a class="nav-link bg-light border" href="/remove-category">
+                    <i class="fas fa-eraser mr-2"></i><span class="small">Remove</span>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="p-0 m-0 d-flex flex-row text-center shadow-sm mb-2" style="list-style-type: none; min-width:100%;">
+            <li style="width: 100%;;">
+                <a class="nav-link bg-light border" href="/add-item">
+                    <i class="fas fa-pallet mx-2"></i><br>
+                    <span class="small">Item</span>
+                </a>
+            </li>
+            <li style="width: 100%;">
+                <a class="nav-link bg-white border" href="/add-category">
+                    <i class="fas fa-inbox mx-2"></i><br>
+                    <span class="small">Category</span>
+                </a>
+            </li>
+            <li style="width: 100%;">
+                <a class="nav-link bg-light border" href="/add-inventory">
+                    <i class="fas fa-warehouse mx-2"></i><br>
+                    <span class="small">Inventory</span>
+                </a>
+            </li>
+            
+       <!--      <li style="width: 100%;">
+                <a class="nav-link bg-light border" href="/add-role">
+                    <i class="fas fa-address-card mx-2"></i><br>
+                    <span class="small">Role</span>
+                </a>
+            </li>  -->       
+        </ul>
+
+        <form class="d-flex flex-column p-4 shadow-sm bg-white border" action="/add-category" method="POST" style="width: 100%;">      
+            <div class="d-flex form-group">
+                <span class="mr-3 lead text-left">Add this category to</span>
+                <select class="form-control form-control-sm" name="inventory" style="width:40%;">
+                    <option selected value="{{ p_inv[0]['id'] }}">{{ p_inv[0]['name'] }}</option>
+                    {% for i in range(n) %}
+                        {% if invs[i]['name'] != p_inv[0]['name'] %}    
+                            <option value="{{ invs[i]['id'] }}">{{ invs[i]['name'] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>  
+            <div class="d-flex flex-row form-group">
+                <input autofocus class="form-control form-control-sm" autocomplete="off" type="text" name="category-name" placeholder="Category name" autofocus>
+            </div>
+            <div class="d-flex flex-row form-group">
+                <input class="form-control form-control-sm" autocomplete="off" type="text" name="about-items" placeholder="About included items">
+            </div> 
+            <button class="btn btn-primary btn-sm" type="submit">Add category</button>
+        </form>  
+    </div>
+</div>
+{% endblock %}
+
+
+

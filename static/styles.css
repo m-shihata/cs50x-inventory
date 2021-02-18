@@ -1,0 +1,113 @@
+tr, th, td {
+  white-space: nowrap;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(228, 228, 228); 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(207, 207, 207); 
+}
+
+
+@keyframes hide {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: .75;
+  }
+  50% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.flashes {
+  animation-name: hide;
+  animation-duration: 7s;
+  animation-fill-mode: forwards;
+  height: 0px;
+}
+
+.flash {
+  float: right;
+  margin-top: 22px;
+  margin-right: 22px;
+}
+
+@keyframes show {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+main {
+  animation-name: show;
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+}
+
+
+.h-note {
+  width: 0px; 
+  height:0px; 
+  overflow:hidden;
+}
+
+.h-col {
+  overflow: hidden;
+  width: 0!important;
+  max-width: 0!important;
+  padding: 0!important;
+  border-width: 0!important;
+  font-size: 0!important;
+}
+
+body {
+  margin: 0;
+  padding: 2rem;
+}
+
+table {
+  text-align: left;
+  position: relative;
+  border-collapse: collapse; 
+}
+
+table > thead > tr > th  {
+  position: sticky;
+  top: -1px;
+}
+
+
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}

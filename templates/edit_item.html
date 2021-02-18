@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Choose item
+{% endblock %}
+
+{% block main %}
+<div class="d-flex justify-content-center">
+    <div class="d-flex flex-column align-items-center" style="width: 420px;">
+        <ul class="p-0 m-0 d-flex flex-row text-center shadow-sm mb-2" style="list-style-type: none; min-width: 100%;">
+            <li style="width: 100%">
+                <a class="nav-link bg-light border" href="/add-item">
+                    <i class="fas fa-plus mr-2"></i><span class="small">Add</span>
+                </a>
+            </li>
+            <li style="width: 100%">
+                <a class="nav-link bg-white border" href="/edit-item">
+                    <i class="fas fa-edit mr-2"></i><span class="small">Edit</span>
+                </a>
+            </li>
+            <li style="width: 100%">
+                <a class="nav-link bg-light border" href="/remove-item">
+                    <i class="fas fa-eraser mr-2"></i><span class="small">Remove</span>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="p-0 m-0 d-flex flex-row text-center shadow-sm mb-2" style="list-style-type: none; min-width:100%;">
+            <li style="width: 100%;;">
+                <a class="nav-link bg-white border" href="/edit-item">
+                    <i class="fas fa-pallet mx-2"></i><br>
+                    <span class="small">Item</span>
+                </a>
+            </li>
+            <li style="width: 100%;">
+                <a class="nav-link bg-light border" href="/edit-category">
+                    <i class="fas fa-inbox mx-2"></i><br>
+                    <span class="small">Category</span>
+                </a>
+            </li>
+            <li style="width: 100%;">
+                <a class="nav-link bg-light border" href="/edit-inventory">
+                    <i class="fas fa-warehouse mx-2"></i><br>
+                    <span class="small">Inventory</span>
+                </a>
+            </li>
+        </ul>
+
+        <form class="d-flex flex-column p-4 shadow-sm bg-white border" action="/edit-item/{{ data['item_id'] }}" method="POST" style="width: 100%;">      
+            <div class="d-flex flex-row form-group">
+                <span class="mr-3 lead text-secondary text-left">Add this item to</span>
+                <select autofocus class="form-control form-control-sm mr-2" name="item-category" style="width: 40%;" id="category">
+                    {% for inventory in invs %}
+                        {% if inventory['id'] == p_inv[0]['id'] %}
+                            <optgroup label="{{ p_inv[0]['name'] }}">
+                                {% for cat in cats %}
+                                    {% if  cat['inventory_id'] == p_inv[0]['id'] %}
+                                        <option value="{{ cat['category_id'] }}">
+                                            {{ cat['category_name'] }} 
+                                        </option>
+                                    {% endif %}                    
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                    {% endfor %}
+                    {% for inventory in invs %}
+                        {% if inventory['id'] != p_inv[0]['id'] %}
+                            <optgroup label="{{ inventory['name'] }}">
+                                {% for cat in cats %}
+                                    {% if  cat['inventory_id'] == inventory['id'] %}
+                                        <option value="{{ cat['category_id'] }}">
+                                            {{ cat['category_name'] }} 
+                                        </option>
+                                    {% endif %}                    
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                
+            </div>  
+            <div class="d-flex flex-row form-group">
+
+                <input class="form-control form-control-sm mr-2" autocomplete="off" type="text" name="item-name" placeholder="Item name" value="{{ data['item_name'] }}">
+                <input class="form-control form-control-sm" autocomplete="off" type="text" name="manifacturer" placeholder="Manifacturer" value="{{ data['manifacturer'] }}">
+            </div>
+            <div class="d-flex flex-row form-group">
+                <input class="form-control form-control-sm mr-2" type="text" name="color" placeholder="Color" value="{{ data['color'] }}">
+                <input class="form-control form-control-sm mr-2" type="number" name="unit-price" placeholder="Unit price" value="{{ data['unit_price'] }}">
+                <input class="form-control form-control-sm mr-2" type="number" name="unit-weight" placeholder="Weight" value="{{ data['unit_weight'] }}">
+                <select class="form-control form-control-sm" name="wt-unit" style="width: 70%;" id="wt-unit">
+                    <option value="gm">gm</option>
+                    <option value="kg">kg</option>
+                    <option value="ton">ton</option>
+                    <option selected value="lb">lb</option>
+                    <option value="oz">oz</option>
+                </select>
+            </div>
+            <div class="d-flex flex-row form-group">
+                <input class="form-control form-control-sm mr-2" type="number" name="length" placeholder="Length" value="{{ data['length'] }}">
+                <input class="form-control form-control-sm mr-2" type="number" name="width" placeholder="Width" value="{{ data['width'] }}">
+                <input class="form-control form-control-sm mr-2" type="number" name="height" placeholder="Height" value="{{ data['height'] }}">
+                <select class="form-control form-control-sm" name="length-unit" style="width: 70%;" id="l-unit">
+                    <option value="mm">mm</option>
+                    <option value="cm">cm</option>
+                    <option value="m">m</option>
+                    <option selected value="inch">Inch</option>
+                    <option value="ft">ft</option>
+                    <option value="yd">yd</option>
+                </select>
+            </div>
+            <div class="d-flex flex-row form-group">
+                <input class="form-control form-control-sm mr-2" autocomplete="off" type="text" name="storage-place" placeholder="Storage place" value="{{ data['storage_place'] }}">
+                <input class="form-control form-control-sm mr-2" autocomplete="off" type="number" name="amount" placeholder="Amount" value="{{ data['amount'] }}">
+                <input class="form-control form-control-sm" autocomplete="off" type="number" name="min-amount" placeholder="Min. amount" value="{{ data['min_amount'] }}">
+            </div>
+            <div class="d-flex flex-row form-group">
+                    <textarea name="note1" autocomplete="off" type="text" class="form-control form-control-sm mr-2" placeholder="Note 1" rows="2">{{ data['note1'] }}</textarea>
+                    <textarea name="note2" autocomplete="off" type="text" class="form-control form-control-sm mr-2" placeholder="Note 2" rows="2">{{ data['note2'] }}</textarea>
+                    <textarea name="note3" autocomplete="off" type="text" class="form-control form-control-sm" placeholder="Note 3" rows="2">{{ data['note3'] }}</textarea>
+            </div>
+            <button class="btn btn-primary btn-sm" type="submit">Save changes</button>
+        </form>  
+        <script>
+            $("#category").val("{{ data['category_id'] }}")
+            $("#l-unit").val("{{ data['length_unit'] }}")
+            $("#wt-unit").val("{{ data['wt_unit'] }}")
+        </script>
+    </div>
+</div>
+{% endblock %}

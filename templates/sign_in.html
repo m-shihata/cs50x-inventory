@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sign in
+{% endblock %}
+
+{% block main %}
+    <div class="d-flex justify-content-center">
+        <div class="d-flex flex-column align-items-center" style="width: 400px;">
+            <form action="/sign-in" method="post" class="d-flex flex-column bg-white shadow-sm p-4 border" style="width: 100%;">               
+                <div class="form-group lead text-secondary pb-1">
+                    <strong>Sign in to continue</strong>
+                </div>
+                <div class="form-group">
+                    <input autocomplete="off" autofocus class="form-control form-control-sm" name="email" placeholder="Email" type="text">
+                </div>
+                <div class="form-group">
+                    <input class="form-control form-control-sm" name="password" placeholder="Password" type="password">
+                </div>
+                <button class="btn btn-primary btn-sm" type="submit">Sign in</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

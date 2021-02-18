@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Apology
+{% endblock %}
+
+{% block main %}
+
+    <main class="p-4" style="overflow-x: auto; text-align: center;">
+        <img alt="{{ top }}" class="border" style="max-width: 100%;" src="http://memegen.link/custom/{{ top | urlencode }}/{{ bottom | urlencode }}.jpg?alt=https://i.imgur.com/CsCgN7Ll.png" title="{{ top }}">
+    </main>
+
+{% endblock %}
+

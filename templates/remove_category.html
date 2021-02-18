@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Choose category
+{% endblock %}
+
+{% block main %}
+<div class="d-flex justify-content-center">
+    <div class="d-flex flex-column align-items-center" style="width: 420px;">
+        <ul class="p-0 m-0 d-flex flex-row text-center shadow-sm mb-2" style="list-style-type: none; min-width: 100%;">
+            <li style="width: 100%">
+                <a class="nav-link bg-light border" href="/add-category">
+                    <i class="fas fa-plus mr-2"></i><span class="small">Add</span>
+                </a>
+            </li>
+            <li style="width: 100%">
+                <a class="nav-link bg-light border" href="/edit-category">
+                    <i class="fas fa-edit mr-2"></i><span class="small">Edit</span>
+                </a>
+            </li>
+            <li style="width: 100%">
+                <a class="nav-link bg-white border" href="/remove-category">
+                    <i class="fas fa-eraser mr-2"></i><span class="small">Remove</span>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="p-0 m-0 d-flex flex-row text-center shadow-sm mb-2" style="list-style-type: none; min-width:100%;">
+            <li style="width: 100%;;">
+                <a class="nav-link bg-light border" href="/remove-item">
+                    <i class="fas fa-pallet mx-2"></i><br>
+                    <span class="small">Item</span>
+                </a>
+            </li>
+            <li style="width: 100%;">
+                <a class="nav-link bg-white border" href="/remove-category">
+                    <i class="fas fa-inbox mx-2"></i><br>
+                    <span class="small">Category</span>
+                </a>
+            </li>
+            <li style="width: 100%;">
+                <a class="nav-link bg-light border" href="/remove-inventory">
+                    <i class="fas fa-warehouse mx-2"></i><br>
+                    <span class="small">Inventory</span>
+                </a>
+            </li>
+<!--             <li style="width: 100%;">
+                <a class="nav-link bg-light border" href="/remove-role">
+                    <i class="fas fa-address-card mx-2"></i><br>
+                    <span class="small">Role</span>
+                </a>
+            </li> -->
+        </ul>
+
+        <form class="d-flex flex-column p-4 shadow-sm bg-white border" action="/remove-category" method="POST" style="width: 100%;">      
+            <div class="d-flex form-group">
+                <strong class="mr-3 lead">Select category to remove</strong>
+            </div>  
+            <div class="form-group">
+                <select autofocus class="form-control form-control-sm custom-select-sm mr-2 w-100" size="5" name="item-category">
+                    {% for inventory in invs %}
+                        {% if inventory['id'] == p_inv[0]['id'] %}
+                            <optgroup label="{{ p_inv[0]['name'] }}">
+                                {% for cat in cats %}
+                                    {% if  cat['inventory_id'] == p_inv[0]['id'] %}
+                                        <option value="{{ cat['category_id'] }}">
+                                            {{ cat['category_name'] }} 
+                                        </option>
+                                    {% endif %}                    
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                    {% endfor %}
+                    {% for inventory in invs %}
+                        {% if inventory['id'] != p_inv[0]['id'] %}
+                            <optgroup label="{{ inventory['name'] }}">
+                                {% for cat in cats %}
+                                    {% if  cat['inventory_id'] == inventory['id'] %}
+                                        <option value="{{ cat['category_id'] }}">
+                                            {{ cat['category_name'] }} 
+                                        </option>
+                                    {% endif %}                    
+                                {% endfor %}
+                            </optgroup>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="d-flex form-group mb-0">
+                <span class="alert alert-warning small w-100">
+                    <i class="fas fa-exclamation-triangle"></i> <strong>Be careful</strong><br>
+                    by pressing remove button this category<br> and <strong>all items included</strong> are deleted forever!
+                </span>
+            </div>
+   
+            <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+            
+        </form>   
+    </div>
+</div>
+{% endblock %}
+
+
+

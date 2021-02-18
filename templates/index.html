@@ -1,0 +1,222 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Inventory
+{% endblock %}
+
+{% block main %}
+<div class="d-flex flex-column justify-content-center h-100">
+    <div class="d-flex flex-wrap">
+
+        <div class="d-flex flex-row flex-wrap justify-content-end w-100">
+            <div style="border-left: 3px solid rgb(81, 81, 82);" class="d-flex flex-column pl-2 mr-auto text-left mb-3">
+                <div class="h5 mb-1">{{ p_inv[0]["name"] }}</div>
+                {% if p_inv[0]["address"] %}
+                    <div class="small text-muted mb-0"> {{ p_inv[0]["address"] }}</div>
+                {% endif %}
+                <div class="small text-muted mb-0">
+                    Estimated value:
+                    <span>{{ p_inv[0]["value"]}}</span>
+                    {{ p_inv[0]['currency']}}                                            
+                    <a title="Edit inventory" href="/edit-inventory/{{p_inv[0]['id'] }}"><i class="fas fa-edit small text-muted"></i></a>
+
+                </div>
+            </div>
+            <div class="no-print d-flex flex-row flex-wrap align-items-end justify-content-end text-left " style="width:455px">
+                <input  onfocusin="new_filter('#category', '#state', 1, 7)" autocomplete="off" onkeyup="filter_items(2, '#input')" value="" class="form-control form-control-sm mx-1" id="input" type="text" placeholder="Search items..." style="max-width: 320px;">
+                <div class="d-flex align-items-center custom-switch mx-1" style="width: 115px; height: 31px">
+                    <input type="checkbox" class="custom-control-input" id="switch" name="checkbox" value="out">
+                    <label class="small text-muted custom-control-label" for="switch">Search notes</label>
+                </div>
+
+                <select  onfocusin="new_filter('#state', '#input', 7, 2)" onchange="filter_items(1, '#category')" value="" class="form-control form-control-sm mx-1 mt-2" name="category" style="width: 156px;" id="category" >
+                    <option value="">Category (all)</option>
+                    {% for i in range(q) %}
+                        {% if cats[i]['inventory_id'] == p_inv[0]['id'] %}
+                            <option value="{{ cats[i]['category_name'] }}">{{ cats[i]['category_name'] }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <select onfocusin="new_filter('#input', '#category', 2, 1)" onchange="filter_items(7, '#state')" value="" class="form-control form-control-sm mx-1 mt-2" name="state" style="width: 156px;" id="state">
+                    <option selected value="">State (all)</option>
+                    <option value="Out">Out of stock</option>
+                    <option value="min">Less than min.</option>
+                    <option value="available">Available</option>
+                </select>
+                <script>
+                    $(document).ready(function(){
+                        $('input[type="checkbox"]').click(function(){
+                            if($(this).prop("checked") == true){
+                                $('input[type="text"]').val('');
+                                $('input[type="text"]').attr("onkeyup", "filter_items(10, '#input')");
+                                $('input[type="text"]').attr("placeholder", "Search notes...");
+                            }
+                            else if($(this).prop("checked") == false){
+                                $('input[type="text"]').val('');
+                                $('input[type="text"]').attr("onkeyup","filter_items(2, '#input')");
+                                $('input[type="text"]').attr("placeholder", "Search items...");
+
+                            }
+                        });
+                    });
+                </script>
+                <button onclick="exportTableToCSV('inventory.csv')" id="download" class="btn btn-sm btn-outline-success mx-1 mt-2" style="min-width: 115px;"><i class="fas fa-file-csv"></i> Download</button>
+            </div>
+            <script src="/static/one_filter.js"></script>
+        </div>
+    </div>
+
+    <div class="tabe-div table-responsive mt-4 shadow-sm border" style="height: 70vh;">
+        <table class="table table-sm table-hover text-center mb-0" id="itemsTable">
+            <thead style>
+                <tr style class="fixed-head shadow-sm table-light">
+                    <th scope="col">#</th>
+                    <th scope="col" class="h-col">Category</th>
+                    <th scope="col">Item</th>
+                    <th scope="col">Manifacturer</th>
+                    <th scope="col">Color</th>
+                    <th scope="col">Dimensions</th>
+                    <th scope="col">Unit weight</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Unit price <span class="small text-muted">({{ p_inv[0]["currency"] }})</span></th>
+                    <th scope="col">Storage Place</th>
+                    <th scope="col" colspan="3">Notes</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                {% if inv|length == 0 and count == 0 %}
+                    <tr class="shadow-sm">
+                        <td colspan="14">No items added yet!</span></td>
+                    </tr>
+                    <tr class="shadow-sm">
+                        <td colspan="14"><span class="small">Visit <a target="_blank" href="/add-item"><i class="fas fa-project-diagram small"></i> manage</a> to create categories & add some items to them</span></td>
+                    </tr>
+                {% else %}
+
+                    {% for cat in cats %}
+                        {% set category_id = cat['category_id'] %}
+
+
+                        {% if cat['inventory_id'] == p_inv[0]['id'] %}
+
+
+                            <tr class=" shadow-sm border-bottom  ">
+                                <td class="text-muted" scope="col" ><i class="fas fa-folder"></i></td>
+                                <td scope="col"  class="h-col">{{ cat['category_name']}}</td>
+                                <th scope="col" class="text-muted text-left" colspan="6">{{ cat['category_name']  }}</th>
+                                <th scope="col" class=" text-muted text-right" colspan="5">{% if cat['about_items'] %} <span class="text-right text-muted small mr-2">({{ cat['about_items'] }})</span>{% endif %}</th>
+                                <th scope="col" class=" text-muted text-right" colspan="1">                               
+                                    <a title="Edit category" href="/edit-category/{{cat['category_id'] }}"><i class="fas fa-edit small text-muted"></i></a>
+                                </th>
+                            </tr>
+
+                            {% set count = [1] %}
+                            {% for item in inv %}
+
+                                {% if item['category_id'] == category_id %}
+
+
+                                    <tr {% if item['amount'] <= 0 %} class="table-danger" {% elif item['amount'] <= item['min_amount'] %} class="table-warning"{% endif %} style>
+                                        <td>
+                                            <strong>{{ count[0] }}</strong>
+                                            {% if count.append(count.pop() + 1) %}{% endif %}
+                                        </td>
+                                        <td class="h-col">
+                                            {% if item['category_name'] %}
+                                                {{ item['category_name'] }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item['item_name'] %}
+                                                {{ item['item_name'] }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item['manifacturer'] %}
+                                                {{ item['manifacturer'] }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item['color'] %}
+                                                {{ item['color'] }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item['length'] %}
+                                                {{ item['length'] }}
+                                            {% endif %}
+
+                                            {% if item['width'] %}
+                                                x {{ item['width'] }}
+                                            {% endif %}
+
+                                            {% if item['height'] %}
+                                                x {{ item['height']}}
+                                            {% endif %}
+                                            {% if item['length'] or item['width'] or item['height'] %}
+                                                <span class="small text-muted">{{ item['length_unit'] }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item['unit_weight'] %}
+                                                {{ item['unit_weight'] }}
+                                                <span class="small text-muted">{{ item['wt_unit'] }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {{ item['amount'] }}
+                                            {% if item['amount'] == 0 %}
+                                                <span class="small text-muted">(out of stock)</span>
+                                            {% elif item['amount'] <= item['min_amount'] %}
+                                                <span class="small text-muted">(minimum {{ item['min_amount'] }})</span>
+                                            {% else %}
+                                                <span class="small text-muted">(available {{ item['amount'] - item['min_amount'] }})</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item['unit_price'] != 0 %}
+                                                {{ item['unit_price'] }}
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item['storage_place'] %}
+                                                {{ item['storage_place'] }}
+                                            {% endif %}
+                                        </td>
+                                        <td  style="max-width: 25px;">
+                                            {% if item['note1'] %}
+                                                <span class="d-flex h-note">{{ item['note1'] }} {% if item['note2'] %} & {{ item['note2'] }} {% endif %} {% if item['note3'] %} & {{ item['note3'] }} {% endif %}</span>
+                                                <button type="button" class="btn btn-sm btn-white mx-1 py-0 px-1" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="{{ item['note1'] }}"><i class="far fa-sticky-note"></i></button>
+                                            {% endif %}
+
+                                        </td>
+                                        <td style="max-width: 25px;">
+                                            {% if item['note2'] %}
+                                                <button type="button" class="btn btn-sm btn-white mx-1 py-0 px-1" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="{{ item['note2'] }}"><i class="far fa-sticky-note"></i></button>
+                                            {% endif %}
+                                        </td>
+                                        <td style="max-width: 25px;">
+                                            {% if item['note3'] %}
+                                                <button type="button" class="btn btn-sm btn-white mx-1 py-0 px-1" data-trigger="hover" data-toggle="popover" data-placement="top" data-content="{{ item['note3'] }}"><i class="far fa-sticky-note"></i></button>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-right">
+                                            <a title="Edit item" href="/edit-item/{{item['item_id'] }}"><i class="fas fa-edit small text-muted"></i></a>
+                                        </td>
+                                    </tr>
+
+                                {% endif %}
+
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
